@@ -16,8 +16,14 @@ spec:
     spec:
       serviceAccountName: padawan
       containers:
-      - name: padawan 
-        image: registry.viarezo.fr/flow/padawanback:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3000
+        - name: padawan
+          image: registry.viarezo.fr/flow/padawanback:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ADMINS
+              valueFrom:
+                configMapKeyRef:
+                  name: padawan-admins
+                  key: admins

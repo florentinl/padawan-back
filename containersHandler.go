@@ -6,6 +6,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (h *Handler) getAllContainers(c *gin.Context) {
+	username := c.GetHeader("X-Forwarded-User")
+	if !isAdmin(username, h) {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "not allowed",
+		})
+		return
+	}
+	var containers []Container
+	if result := h.db.Find(&containers); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error,
+		})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, containers)
+}
+
 func (h *Handler) getMyContainer(c *gin.Context) {
 	username := c.GetHeader("X-Forwarded-User")
 	getContainer(username, h, c)
@@ -29,7 +47,7 @@ func (h *Handler) getUserContainer(c *gin.Context) {
 		})
 		return
 	}
-	user := c.Param("user")
+	user := c.Param("username")
 	getContainer(user, h, c)
 
 }
@@ -42,7 +60,7 @@ func (h *Handler) postUserContainer(c *gin.Context) {
 		})
 		return
 	}
-	user := c.Param("user")
+	user := c.Param("username")
 	postContainer(user, h, c)
 }
 
@@ -54,6 +72,6 @@ func (h *Handler) deleteUserContainer(c *gin.Context) {
 		})
 		return
 	}
-	user := c.Param("user")
+	user := c.Param("username")
 	deleteContainer(user, h, c)
 }
