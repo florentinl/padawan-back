@@ -9,7 +9,7 @@ func main() {
 	handler := newHandler()
 
 	router := gin.Default()
-
+	router.Use(CORSMiddleware())
 	router.GET("/containers", handler.getAllContainers)
 
 	containerRoute := router.Group("/container")
