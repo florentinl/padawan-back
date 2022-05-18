@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: padawan-admins
 data:
-  admins: florentin.labelle@student-cs.fr,random.pelo@student-cs.fr
+  admins: {{ .Values.admins }}

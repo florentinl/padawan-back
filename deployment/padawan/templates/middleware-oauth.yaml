@@ -1,0 +1,9 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{.Values.middleware.name}}
+spec:
+  forwardAuth:
+    address: {{.Values.middleware.address}}
+    authResponseHeaders:
+      - X-Forwarded-User

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: padawan
+description: Padawan deployment with MySQL backend
+type: application
+version: 0.1.0
+appVersion: "4.0.0"
+dependencies:
+  - name: mysql
+    version: 9.0.0
+    repository: https://charts.bitnami.com/bitnami

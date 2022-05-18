@@ -1,0 +1,30 @@
+host: padawan.kube.test.viarezo.fr
+replicas: 1
+admins: florentin.labelle@student-cs.fr,random.pelo@student-cs.fr
+
+mysql:
+  auth:
+    existingSecret: mysql-credentials
+    username: padawan
+    database: padawan
+
+deployment:
+  name: traefik-forward-auth-deploy
+  replicas: 2
+  containerPort: 4181
+  env:
+    provider: generic-oauth
+    authUrl: https://auth.viarezo.fr/oauth/authorize
+    tokenUrl: https://auth.viarezo.fr/oauth/token
+    userUrl: https://auth.viarezo.fr/api/user/show/me
+    oauthScope: default
+secret:
+  name: traefik-forward-auth-secrets
+  production: false
+service:
+  name: traefik-forward-auth-service
+  type: ClusterIP
+  port: 4181
+middleware:
+  name: traefik-forward-auth
+  address: http://traefik-forward-auth-service.padawan:4181

@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
 
-	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -36,8 +37,12 @@ type Image struct {
 }
 
 func newHandler() *Handler {
-	var err error
-	db, err := gorm.Open(sqlite.Open("padawan.db"), &gorm.Config{})
+	dbuser := strings.Trim(os.Getenv("DB_USER"), "\n")
+	dbpass := strings.Trim(os.Getenv("DB_PASSWORD"), "\n")
+	dbname := strings.Trim(os.Getenv("DB_NAME"), "\n")
+	dbhost := strings.Trim(os.Getenv("DB_HOST"), "\n")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbuser, dbpass, dbhost, dbname)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}

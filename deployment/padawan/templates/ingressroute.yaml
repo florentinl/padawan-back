@@ -1,17 +1,19 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: padawan.kube.test.viarezo.fr
+  name: {{ .Values.host }}
 spec:
   entryPoints:
     - web
     - websecure
   routes:
     - kind: Rule
-      match: Host(`padawan.kube.test.viarezo.fr`)
+      match: Host(`{{ .Values.host }}`)
       services:
         - kind: Service
           name: padawan
           port: 80
+      middlewares:
+        - name: {{ .Values.middleware.name }}
   tls:
-    secretName: padawan.kube.test.viarezo.fr
+    secretName: {{ .Values.host }}
