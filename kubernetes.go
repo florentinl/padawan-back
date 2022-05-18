@@ -113,9 +113,16 @@ func createResources(username string, imageName string, password string, h *Hand
 	if err != nil {
 		panic(err)
 	}
+
+	port, err := getResources(username, h)
+	if err != nil {
+		return &Container{}, err
+	}
+
 	newContainer := &Container{
 		Username:  username,
 		ImageName: imageName,
+		Port:      port,
 	}
 
 	return newContainer, nil

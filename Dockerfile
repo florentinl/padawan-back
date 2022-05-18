@@ -5,7 +5,7 @@ WORKDIR /app
 COPY go.* ./
 RUN go mod download
 
-COPY main.go kubernetes.go handler.go /app/
+COPY *.go /app/
 RUN go build -o=main
 
 # =====================================================

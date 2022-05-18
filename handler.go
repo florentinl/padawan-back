@@ -2,6 +2,8 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
+	"strings"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -13,11 +15,13 @@ type Handler struct {
 	db        *gorm.DB
 	client    *kubernetes.Clientset
 	namespace string
+	admins    []string
 }
 
 type Container struct {
 	Username  string `json:"username" gorm:"primary_key"`
 	ImageName string `json:"image_name"`
+	Port      int    `json:"port"`
 }
 
 type ContainerRequest struct {
@@ -37,6 +41,8 @@ func newHandler() *Handler {
 	if err != nil {
 		panic("failed to connect database")
 	}
+	db.AutoMigrate(&Image{})
+	db.AutoMigrate(&Container{})
 
 	// creates the in-cluster config
 	config, err := rest.InClusterConfig()
@@ -54,9 +60,21 @@ func newHandler() *Handler {
 		panic(err.Error())
 	}
 
+	admins := strings.Split(os.Getenv("ADMINS"), ",")
+
 	return &Handler{
 		db:        db,
 		client:    clientset,
 		namespace: namespace,
+		admins:    admins,
 	}
+}
+
+func isAdmin(username string, h *Handler) bool {
+	for _, admin := range h.admins {
+		if username == admin {
+			return true
+		}
+	}
+	return false
 }

@@ -1,20 +1,23 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) getContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
-	port, err := getResources(username, h)
-	c.IndentedJSON(http.StatusOK, gin.H{"exists": err == nil, "port": port})
+func getContainer(username string, h *Handler, c *gin.Context) {
+	var container Container
+	if result := h.db.Where("username = ?", username).First(&container); result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "container not found",
+		})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, container)
 }
 
-func (h *Handler) postContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+func postContainer(username string, h *Handler, c *gin.Context) {
 	var request ContainerRequest
 
 	if err := c.BindJSON(&request); err != nil {
@@ -30,19 +33,25 @@ func (h *Handler) postContainer(c *gin.Context) {
 		return
 	}
 
-	_, err := createResources(username, request.ImageName, request.Password, h)
+	newContainer, err := createResources(username, request.ImageName, request.Password, h)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": err.Error(),
 		})
 		return
 	}
-	h.getContainer(c)
+
+	if result := h.db.Create(&newContainer); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error,
+		})
+		return
+	}
+
+	c.IndentedJSON(http.StatusOK, newContainer)
 }
 
-func (h *Handler) deleteContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
-	fmt.Println(username)
+func deleteContainer(username string, h *Handler, c *gin.Context) {
 	err := deleteResources(username, h)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -50,5 +59,21 @@ func (h *Handler) deleteContainer(c *gin.Context) {
 		})
 		return
 	}
+
+	// Remove resource from database
+	var container Container
+	if result := h.db.Where("username = ?", username).First(&container); result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "container not found",
+		})
+		return
+	}
+	if result := h.db.Delete(&container); result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": result.Error,
+		})
+		return
+	}
+
 	c.Status(http.StatusOK)
 }
