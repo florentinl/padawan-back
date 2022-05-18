@@ -1,7 +1,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: florentin
+  name: {{ .Name }}
 rules:
   - apiGroups: 
       - "*"
@@ -11,7 +11,7 @@ rules:
       - get
       - list
     resourceNames:
-      - florentin-0
+      - {{ .Name }}-0
   - apiGroups: 
       - "*"
     resources:
@@ -19,4 +19,4 @@ rules:
     verbs: 
       - create
     resourceNames:
-      - florentin-0
+      - {{ .Name }}-0
