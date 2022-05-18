@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Name }}-ssh
+spec:
+  replicas: 1
+  serviceName: {{ .Name }}
+  selector:
+    matchLabels: 
+      app: {{ .Name }}-padawan
+  template:
+    metadata:
+      name: {{ .Name }}-ssh
+      labels:
+        app: {{ .Name }}-padawan
+        type: ssh
+    spec:
+        serviceAccount: {{ .Name }}
+        containers:
+        - name: main
+          image: registry.viarezo.fr/flow/containssh:latest
+          ports:
+            - containerPort: 22
+              name: ssh
+          env:
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Name }}
+                  key: username
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Name }}
+                  key: password
+            - name: CONTAINERSHELL
+              value: {{ .Shell }}

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Name }}
+spec:
+  replicas: 1
+  serviceName: {{ .Name }}
+  selector:
+    matchLabels:
+      app: {{ .Name }}-padawan
+      type: container
+  template:
+    metadata:
+      name: {{ .Name }}
+      labels:
+        app: {{ .Name }}-padawan
+        type: container
+    spec:
+      serviceAccount: {{ .Name }}
+      containers:
+        - name: main
+          image: {{ .Image }}
+          command:
+            - sleep
+          args:
+            - infinity
+          imagePullPolicy: Always

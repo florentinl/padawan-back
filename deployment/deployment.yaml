@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: padawan
+  labels:
+    app: padawan
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: padawan
+  template:
+    metadata:
+      labels:
+        app: padawan
+    spec:
+      serviceAccountName: padawan
+      containers:
+      - name: padawan 
+        image: registry.viarezo.fr/flow/padawanback:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000

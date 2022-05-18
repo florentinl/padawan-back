@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Name }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Name }}-padawan
+    type: ssh
+  ports:
+  - port: 22
+    targetPort: 22

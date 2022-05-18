@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: padawan.kube.test.viarezo.fr
+spec:
+  secretName: padawan.kube.test.viarezo.fr
+  dnsNames:
+    - padawan.kube.test.viarezo.fr
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
