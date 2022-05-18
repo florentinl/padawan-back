@@ -19,7 +19,7 @@ type ContainerDefinition struct {
 	Shell    string
 }
 
-func (h *Handler) getImage(imageName string) (Image, error) {
+func (h *Handler) getImageData(imageName string) (Image, error) {
 	var image Image
 	if result := h.db.Where("image_name = ?", imageName).First(&image); result.Error != nil {
 		return Image{}, result.Error
@@ -53,7 +53,7 @@ func createResource(filename string, containerDefinition ContainerDefinition, da
 func createResources(username string, imageName string, password string, h *Handler) (*Container, error) {
 
 	// Gather image info from database
-	image, err := h.getImage(imageName)
+	image, err := h.getImageData(imageName)
 	if err != nil {
 		return &Container{}, err
 	}

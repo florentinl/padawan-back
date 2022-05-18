@@ -7,15 +7,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) existsContainer(c *gin.Context) {
+func (h *Handler) getContainer(c *gin.Context) {
 	username := c.GetHeader("X-Forwarded-User")
 	port, err := getResources(username, h)
 	c.IndentedJSON(http.StatusOK, gin.H{"exists": err == nil, "port": port})
-}
-
-type ContainerRequest struct {
-	ImageName string `json:"image_name"`
-	Password  string `json:"password"`
 }
 
 func (h *Handler) postContainer(c *gin.Context) {
@@ -42,7 +37,7 @@ func (h *Handler) postContainer(c *gin.Context) {
 		})
 		return
 	}
-	h.existsContainer(c)
+	h.getContainer(c)
 }
 
 func (h *Handler) deleteContainer(c *gin.Context) {

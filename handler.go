@@ -20,6 +20,11 @@ type Container struct {
 	ImageName string `json:"image_name"`
 }
 
+type ContainerRequest struct {
+	ImageName string `json:"image_name"`
+	Password  string `json:"password"`
+}
+
 type Image struct {
 	ImageName  string `json:"image_name" gorm:"primary_key"`
 	Repository string `json:"repository"`
@@ -42,8 +47,8 @@ func newHandler() *Handler {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	namespace := string(b)
-	// creates the clientset
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err.Error())
