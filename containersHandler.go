@@ -7,7 +7,7 @@ import (
 )
 
 func (h *Handler) getAllContainers(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",
@@ -25,22 +25,22 @@ func (h *Handler) getAllContainers(c *gin.Context) {
 }
 
 func (h *Handler) getMyContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	getContainer(username, h, c)
 }
 
 func (h *Handler) postMyContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	postContainer(username, h, c)
 }
 
 func (h *Handler) deleteMyContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	deleteContainer(username, h, c)
 }
 
 func (h *Handler) getUserContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",
@@ -53,7 +53,7 @@ func (h *Handler) getUserContainer(c *gin.Context) {
 }
 
 func (h *Handler) postUserContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",
@@ -65,7 +65,7 @@ func (h *Handler) postUserContainer(c *gin.Context) {
 }
 
 func (h *Handler) deleteUserContainer(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",

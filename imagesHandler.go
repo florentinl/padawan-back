@@ -7,26 +7,12 @@ import (
 )
 
 func (h *Handler) getImages(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
-	if !isAdmin(username, h) {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "not allowed",
-		})
-		return
-	}
 	var images []Image
 	h.db.Find(&images)
 	c.IndentedJSON(http.StatusOK, images)
 }
 
 func (h *Handler) getImage(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
-	if !isAdmin(username, h) {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "not allowed",
-		})
-		return
-	}
 	imageName := c.Param("image_name")
 	var image Image
 	if result := h.db.Where("image_name = ?", imageName).First(&image); result.Error != nil {
@@ -39,7 +25,7 @@ func (h *Handler) getImage(c *gin.Context) {
 }
 
 func (h *Handler) postImage(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",
@@ -63,7 +49,7 @@ func (h *Handler) postImage(c *gin.Context) {
 }
 
 func (h *Handler) putImage(c *gin.Context) {
-	username := c.GetHeader("X-Forwarded-User")
+	username := getUsername(c)
 	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",
@@ -94,7 +80,8 @@ func (h *Handler) putImage(c *gin.Context) {
 }
 
 func (h *Handler) deleteImage(c *gin.Context) {
-	if !isAdmin(c.GetHeader("X-Forwarded-User"), h) {
+	username := getUsername(c)
+	if !isAdmin(username, h) {
 		c.JSON(http.StatusForbidden, gin.H{
 			"error": "not allowed",
 		})

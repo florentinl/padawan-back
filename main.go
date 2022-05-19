@@ -1,6 +1,8 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,6 +13,11 @@ func main() {
 	router := gin.Default()
 	router.Use(CORSMiddleware())
 	router.GET("/containers", handler.getAllContainers)
+
+	router.LoadHTMLFiles("login.html")
+	router.GET("/login", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+	})
 
 	containerRoute := router.Group("/container")
 	containerRoute.GET("/me", handler.getMyContainer)

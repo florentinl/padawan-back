@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"k8s.io/client-go/kubernetes"
@@ -34,6 +35,11 @@ type Image struct {
 	ImageName  string `json:"image_name" gorm:"primary_key"`
 	Repository string `json:"repository"`
 	Shell      string `json:"shell"`
+}
+
+func getUsername(c *gin.Context) string {
+	username := c.Request.Header.Get("X-Forwarded-User")
+	return strings.ReplaceAll(strings.Split(username, "@")[0], ".", "-")
 }
 
 func newHandler() *Handler {

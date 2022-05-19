@@ -17,6 +17,5 @@ WORKDIR /app
 COPY ./templates templates
 
 COPY --from=build /app/main /main
-
 EXPOSE 3000
 ENTRYPOINT ["/main"]
