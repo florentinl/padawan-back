@@ -1,8 +1,6 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,14 +10,11 @@ func main() {
 
 	router := gin.Default()
 	router.Use(CORSMiddleware())
-	router.GET("/containers", handler.getAllContainers)
+	router.GET("/api/containers", handler.getAllContainers)
 
-	router.LoadHTMLFiles("login.html")
-	router.GET("/login", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-	})
+	router.GET("/api/login", handler.login)
 
-	containerRoute := router.Group("/container")
+	containerRoute := router.Group("/api/container")
 	containerRoute.GET("/me", handler.getMyContainer)
 	containerRoute.POST("/me", handler.postMyContainer)
 	containerRoute.DELETE("/me", handler.deleteMyContainer)
@@ -27,7 +22,7 @@ func main() {
 	containerRoute.POST("/:username", handler.postUserContainer)
 	containerRoute.DELETE("/:username", handler.deleteUserContainer)
 
-	imageRoute := router.Group("/images")
+	imageRoute := router.Group("/api/images")
 	imageRoute.GET(":image_name", handler.getImage)
 	imageRoute.GET("", handler.getImages)
 	imageRoute.POST("", handler.postImage)
