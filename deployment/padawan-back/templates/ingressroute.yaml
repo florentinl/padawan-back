@@ -1,17 +1,17 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ .Values.host }}
+  name: padawan-back
 spec:
   entryPoints:
     - web
     - websecure
   routes:
     - kind: Rule
-      match: Host(`{{ .Values.host }}`)
+      match: Host(`{{ .Values.host }}`) && PathPrefix("/api")
       services:
         - kind: Service
-          name: padawan
+          name: padawan-back
           port: 80
       middlewares:
         - name: {{ .Values.middleware.name }}

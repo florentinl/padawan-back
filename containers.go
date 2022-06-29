@@ -9,12 +9,15 @@ import (
 func getContainer(username string, h *Handler, c *gin.Context) {
 	var container Container
 	if result := h.db.Where("username = ?", username).First(&container); result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "container not found",
+		// Return empty container if not found
+		c.JSON(http.StatusOK, gin.H{
+			"container": Container{},
 		})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, container)
+	c.IndentedJSON(http.StatusOK, gin.H{
+		"container": container,
+	})
 }
 
 func postContainer(username string, h *Handler, c *gin.Context) {

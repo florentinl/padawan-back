@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: padawan
+  name: padawan-back
 spec:
   selector:
     app: padawan
+    tier: backend
   ports:
     - protocol: TCP
       port: 80

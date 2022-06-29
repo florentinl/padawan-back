@@ -1,18 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: padawan
+  name: padawan-back
   labels:
     app: padawan
+    tier: backend
 spec:
   replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       app: padawan
+      tier: backend
   template:
     metadata:
       labels:
         app: padawan
+        tier: backend
     spec:
       serviceAccountName: padawan
       containers:

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -37,9 +39,35 @@ type Image struct {
 	Shell      string `json:"shell"`
 }
 
+type User struct {
+	ID             int      `json:"id"`
+	Login          string   `json:"login"`
+	FirstName      string   `json:"firstName"`
+	LastName       string   `json:"lastName"`
+	Email          string   `json:"email"`
+	AlternateEmail string   `json:"alternateEmail"`
+	BirthDate      string   `json:"birthDate"`
+	Promo          int      `json:"promo"`
+	Gender         string   `json:"gender"`
+	Photo          string   `json:"photo"`
+	UpdatedAt      string   `json:"updatedAt"`
+	Roles          []string `json:"roles"`
+	PersonType     string   `json:"personType"`
+}
+
 func getUsername(c *gin.Context) string {
-	username := c.Request.Header.Get("X-Forwarded-User")
-	return strings.ReplaceAll(strings.Split(username, "@")[0], ".", "-")
+	userInformations := c.Request.Header.Get("X-Forwarded-User")
+	// decode from base64
+	rawDecodedText, err := base64.StdEncoding.DecodeString(userInformations)
+	if err != nil {
+		panic(err.Error())
+	}
+	user := &User{}
+	err = json.Unmarshal(rawDecodedText, user)
+	if err != nil {
+		panic(err.Error())
+	}
+	return user.Login
 }
 
 func newHandler() *Handler {

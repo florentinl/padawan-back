@@ -7,5 +7,5 @@ import (
 )
 
 func (h *Handler) login(c *gin.Context) {
-	c.Redirect(http.StatusMovedPermanently, "https://padawan.kube.test.viarezo.fr/")
+	c.Redirect(http.StatusMovedPermanently, "http://padawan.kube.test.viarezo.fr/")
 }

@@ -1,6 +1,6 @@
 host: padawan.kube.test.viarezo.fr
 replicas: 1
-admins: florentin-labelle,random-pelo
+admins: 2021labellefl
 
 mysql:
   auth:
